@@ -1,13 +1,65 @@
-import { View, Text,StyleSheet,TouchableOpacity, ImageBackground,TextInput, StatusBar } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text,StyleSheet,TouchableOpacity, ImageBackground,TextInput, StatusBar, Alert } from 'react-native'
+import React, { useEffect, useState } from 'react'
 
+//firebase components import 
+import {initializeApp} from "firebase/app";
+import { firebaseConfig } from '../firebaseConfig';
+import {getAuth,sendPasswordResetEmail,signInWithEmailAndPassword,} from "firebase/auth"
 
 export default function Loginpage({navigation}) {
-  const [email,setemail] = useState('');
+//state create for login
   const [password,setpassword] = useState('');
+  const [email,setemail] = useState('');
 
+  //Loginpage to screen  ai
+  const handleSignin =()=>{
+//import app and auth functions for connecting
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+//signin code fire base connect 
+    signInWithEmailAndPassword(auth , email, password)
+    .then((userCredential)=>{
+      console.log("Signin user")
+      const user = userCredential.user;
+      console.log(user)
+      navigation.navigate('Home')
+    })
+    .catch(error =>{
+      console.log(error)
+      alert("Email or password is Wrong")
+  
+    })
+  }
+  //forgote password reset password
+  //  useEffect(()=>{
+  //   const app = initializeApp(firebaseConfig);
+  //   const auth = getAuth(app);
+  //   onAuthStateChanged(auth,(user)=>{
+  //     if(user){
+  //       navigation.navigate('Home');
+  //     }
+  //   })
+  //  })
+  const Forgotepassword =()=>{
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    if(email != null){
+     sendPasswordResetEmail(auth, email)
+     .then(()=>{
+       alert("password reset email has been sent success")
 
- 
+     })
+     .catch((error)=>{
+     const errorCode = error.code;
+     const errorMessage = error.message;
+     alert(errorMessage);
+     })
+    }
+    else{
+      alert("Please enter a valid email");
+    }
+  }
+//retun login screen code
   return (
 
     <View >
@@ -38,13 +90,13 @@ export default function Loginpage({navigation}) {
                   secureTextEntry={true}
                  />
              </View>
-             <View style={{top:"40%",alignItems:"center",}}>  
-                 <TouchableOpacity style={styles.buttonSin} onPress={()=>navigation.navigate("Home")}>
+             <View style={{top:"40%",alignItems:"center",backgroundColor:"#rgba(144, 254, 245, 0.8)",width:100,height:35,borderRadius:8,left:"35%"}}>  
+                 <TouchableOpacity style={{paddingTop:"7%",}} onPress={handleSignin}>
                     <Text>Submit</Text>
                  </TouchableOpacity>
               </View>   
          </View>  
-           <TouchableOpacity style={{alignItems:"flex-end",top:"30%", marginHorizontal:10,}}>
+           <TouchableOpacity style={{alignItems:"flex-end",top:"30%", marginHorizontal:10,}} onPress={Forgotepassword}>
                <Text>Forgot Password ?</Text>
            </TouchableOpacity>
          <View style={{left:"56%",top:"38%", }}>  
@@ -76,7 +128,7 @@ const styles = StyleSheet.create({
        
     },
     buttonSin:{
-      
+       backgroundColor:"yellow",
       justifyContent:"center",
       alignItems:"center",
        width:"40%",
