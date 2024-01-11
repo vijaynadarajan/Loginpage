@@ -30,6 +30,7 @@ export default function Navigations() {
       <Stack.Navigator>
          <Stack.Screen options={{headerShown:false,}} name='Welcome' component={Welcomepage} />      
           <Stack.Screen options={{headerShown:false,}} name='customer' component={Customer} />  
+          <Stack.Screen options={{headerShown:false,}} name='Join' component={Joinscreen} />
           <Stack.Screen options={{headerShown:false,}} name='Home' component={Homescreen} />
       </Stack.Navigator>
     </NavigationContainer>
